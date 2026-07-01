@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c9a227"/>
+      <stop offset="1" stop-color="#a07d2b"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="url(#bg)"/>
+  <rect x="2.75" y="2.75" width="58.5" height="58.5" rx="13.25" fill="none" stroke="#5a3f16" stroke-opacity="0.35" stroke-width="1.5"/>
+  <g fill="none" stroke="#f4ecd8" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Chi (X) -->
+    <line x1="18" y1="19" x2="46" y2="49"/>
+    <line x1="46" y1="19" x2="18" y2="49"/>
+    <!-- Rho: vertical staff + bowl loop at the top -->
+    <line x1="32" y1="12" x2="32" y2="53"/>
+    <path d="M32 13 q11 0 11 8.5 T32 30"/>
+  </g>
+</svg>
