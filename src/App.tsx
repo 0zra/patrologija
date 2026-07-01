@@ -260,6 +260,7 @@ export default function App() {
               Zlatne točke su sabori i događaji. Klikni osobu, herezu ili događaj za detalje,
               pretraži ili filtriraj lijevo. Simboli na crti označavaju ređenja (đakon, prezbiter, biskup…).
             </p>
+            <p className="welcome-note">💻 Najbolje se pregledava na računalu (širem zaslonu).</p>
           </div>
         )}
       </main>
