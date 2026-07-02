@@ -349,6 +349,31 @@ input[type="range"] { width: 100%; accent-color: var(--gold); }
 .rel-pill.heresy { border-color: rgba(176, 65, 62, 0.4); color: #8c2f2c; background: rgba(176, 65, 62, 0.08); }
 .rel-pill.heresy:hover { background: rgba(176, 65, 62, 0.16); border-color: var(--heresy); }
 
+/* ---------- map (Roman world) ---------- */
+.roman-map { display: block; width: 100%; height: auto; }
+.roman-map.clickable { cursor: zoom-in; }
+.rm-sea { fill: #c4d3d5; }
+.rm-land { fill: #e7dcc3; stroke: #b0a079; stroke-width: 0.5; }
+.rm-place { fill: var(--heresy); stroke: #fff; stroke-width: 1.2; }
+.rm-region { fill: var(--heresy); opacity: 0.16; }
+.rm-place-label { font-family: var(--serif); font-weight: 700; font-size: 12px; fill: #7e2f2c; paint-order: stroke; stroke: var(--card); stroke-width: 3px; stroke-linejoin: round; }
+.rm-anchor { fill: #8a7a5c; opacity: 0.75; }
+.rm-anchor-label { font-family: var(--serif); font-size: 11px; fill: #6b5d45; opacity: 0.85; paint-order: stroke; stroke: var(--card); stroke-width: 2.5px; stroke-linejoin: round; }
+
+/* compact thumbnail in the drawer */
+.map-thumb { position: relative; display: block; width: 100%; padding: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: none; line-height: 0; }
+.map-thumb:hover { border-color: var(--gold); }
+.map-thumb .map-expand { position: absolute; right: 8px; bottom: 8px; background: rgba(30,22,12,0.62); color: #fff; font-size: 11px; line-height: 1; padding: 3px 8px; border-radius: 6px; }
+.map-places { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+
+/* full-screen enlarge overlay */
+.map-overlay { position: fixed; inset: 0; z-index: 60; background: rgba(30,22,12,0.55); display: flex; align-items: center; justify-content: center; padding: 20px; animation: fade 0.18s ease; }
+.map-dialog { position: relative; background: var(--card); border-radius: 14px; box-shadow: var(--shadow-lg); max-width: min(1160px, 95vw); max-height: 94vh; overflow: auto; padding: 16px 18px 14px; }
+.map-dialog-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.map-dialog-head h3 { font-size: 18px; }
+.map-dialog-head .close { width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg-2); font-size: 17px; color: var(--ink-mut); }
+.map-dialog-head .close:hover { background: var(--panel-2); }
+
 /* scrollbars */
 .main::-webkit-scrollbar, .sidebar::-webkit-scrollbar, .drawer-body::-webkit-scrollbar, .search-results::-webkit-scrollbar { width: 12px; height: 12px; }
 .main::-webkit-scrollbar-thumb, .sidebar::-webkit-scrollbar-thumb, .drawer-body::-webkit-scrollbar-thumb, .search-results::-webkit-scrollbar-thumb {

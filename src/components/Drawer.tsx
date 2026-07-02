@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type { Relation, RelationType } from '../types';
 import {
   CATEGORY_META, EVENT_META, ORDINATION_META, PERIOD_META, RELATION_META, SCHOOL_META, SIDE_LABEL,
@@ -6,6 +6,8 @@ import {
 import {
   eventById, eventYear, eventsByPerson, heresiesByPerson, heresyById, peopleById, personName, relationsByPerson,
 } from '../lib/data';
+import { resolvePlaces } from '../lib/places';
+import RomanMap from './RomanMap';
 import { isPrimary } from '../lib/coverage';
 
 interface Props {
@@ -54,11 +56,13 @@ function PersonView({ id, onClose, onSelectPerson, onSelectEvent, onSelectHeresy
   id: string; onClose: () => void; onSelectPerson: (id: string) => void; onSelectEvent: (id: string) => void; onSelectHeresy: (id: string) => void;
 }) {
   const p = peopleById.get(id);
+  const [mapOpen, setMapOpen] = useState(false);
   if (!p) return null;
   const cat = CATEGORY_META[p.category];
   const rels = relationsByPerson.get(id) ?? [];
   const evs = (eventsByPerson.get(id) ?? []).slice().sort((a, b) => eventYear(a) - eventYear(b));
   const her = heresiesByPerson.get(id) ?? [];
+  const { mapped: places, unmapped: unmappedPlaces } = resolvePlaces(p.locations);
 
   // group relations by type
   const groups = new Map<RelationType, { r: Relation; out: boolean }[]>();
@@ -103,6 +107,20 @@ function PersonView({ id, onClose, onSelectPerson, onSelectEvent, onSelectHeresy
         {p.keyFact && <div className="sect"><p className="bio" style={{ fontStyle: 'italic' }}>„{p.keyFact}”</p></div>}
 
         {p.bio && <div className="sect"><h3>Životopis</h3><p className="bio">{p.bio}</p></div>}
+
+        {places.length ? (
+          <div className="sect">
+            <h3>Na zemljovidu</h3>
+            <button className="map-thumb" onClick={() => setMapOpen(true)} title="Klikni za povećanje">
+              <RomanMap places={places} width={400} showPlaceLabels={false} />
+              <span className="map-expand">⤢ povećaj</span>
+            </button>
+            <div className="map-places">
+              {places.map((pl) => <span key={pl.name} className="badge">📍 {pl.name}</span>)}
+              {unmappedPlaces.map((n) => <span key={n} className="badge" style={{ opacity: 0.6 }}>{n}</span>)}
+            </div>
+          </div>
+        ) : null}
 
         {p.ordinations?.length ? (
           <div className="sect">
@@ -206,6 +224,24 @@ function PersonView({ id, onClose, onSelectPerson, onSelectEvent, onSelectHeresy
           </div>
         ) : null}
       </div>
+
+      {mapOpen ? (
+        <div className="map-overlay" onClick={() => setMapOpen(false)}>
+          <div className="map-dialog" onClick={(ev) => ev.stopPropagation()}>
+            <div className="map-dialog-head">
+              <h3>{p.name} — na zemljovidu</h3>
+              <button className="close" onClick={() => setMapOpen(false)} aria-label="Zatvori">×</button>
+            </div>
+            <div className="map-dialog-body">
+              <RomanMap places={places} width={1100} showAnchorLabels title={`${p.name} — mjesta`} />
+            </div>
+            <div className="map-places">
+              {places.map((pl) => <span key={pl.name} className="badge">📍 {pl.name}</span>)}
+              {unmappedPlaces.map((n) => <span key={n} className="badge" style={{ opacity: 0.6 }}>{n} (nije na karti)</span>)}
+            </div>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 }
