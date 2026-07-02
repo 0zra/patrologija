@@ -30,7 +30,7 @@ export class Geometry {
   laneStep: number;
   barThick: number;
 
-  constructor(layout: Layout, pxPerYear: number, orientation: Orientation, timeSpan: number, availableCross = 0) {
+  constructor(layout: Layout, pxPerYear: number, orientation: Orientation, timeSpan: number, availableCross = 0, fitCross = false) {
     this.layout = layout;
     this.pxPerYear = pxPerYear;
     this.orientation = orientation;
@@ -40,13 +40,21 @@ export class Geometry {
     const hasRulers = layout.lanes.rulers > 0;
     const fixedExtra = EDGE_PAD * 2 + AXIS_BAND + ZONE_PAD * 2 + (hasRulers ? RULER_GAP : 0);
 
-    // stretch lanes/bars to fill the available width when there is spare room
     let laneStep = LANE_STEP_MIN;
-    if (totalLanes > 0 && availableCross > fixedExtra + totalLanes * LANE_STEP_MIN) {
+    let barThick = Math.max(BAR_THICK_MIN, Math.min(BAR_THICK_MAX, laneStep - LANE_GAP_MIN));
+    if (fitCross && totalLanes > 0) {
+      // shrink lanes/bars (below the usual minimum if needed) so every lane fits
+      // within the available cross-axis — the whole cluster is visible without scrolling it
       laneStep = Math.min(LANE_STEP_MAX, (availableCross - fixedExtra) / totalLanes);
+      const gap = Math.min(LANE_GAP_MIN, laneStep * 0.3);
+      barThick = Math.max(3, Math.min(BAR_THICK_MAX, laneStep - gap));
+    } else if (totalLanes > 0 && availableCross > fixedExtra + totalLanes * LANE_STEP_MIN) {
+      // stretch lanes/bars to fill the available cross-axis when there is spare room
+      laneStep = Math.min(LANE_STEP_MAX, (availableCross - fixedExtra) / totalLanes);
+      barThick = Math.max(BAR_THICK_MIN, Math.min(BAR_THICK_MAX, laneStep - LANE_GAP_MIN));
     }
     this.laneStep = laneStep;
-    this.barThick = Math.max(BAR_THICK_MIN, Math.min(BAR_THICK_MAX, laneStep - LANE_GAP_MIN));
+    this.barThick = barThick;
 
     const leftW = layout.lanes.left * laneStep;
     const rightW = layout.lanes.right * laneStep;

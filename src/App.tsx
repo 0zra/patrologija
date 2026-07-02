@@ -19,9 +19,12 @@ import Tooltip, { type HoverState } from './components/Tooltip';
 
 const ALL_CATS: Category[] = ['apostolski-otac', 'otac', 'naucitelj', 'apologet', 'pisac', 'biskup', 'papa', 'heretik', 'ostalo', 'car'];
 
+// Matches the CSS mobile breakpoint; used only for initial defaults.
+const isMobile = () => typeof window !== 'undefined' && window.matchMedia('(max-width: 720px)').matches;
+
 export default function App() {
-  const [orientation, setOrientation] = useState<Orientation>('vertical');
-  const [zoom, setZoom] = useState(5);
+  const [orientation, setOrientation] = useState<Orientation>(() => (isMobile() ? 'horizontal' : 'vertical'));
+  const [zoom, setZoom] = useState(() => (isMobile() ? 2.5 : 5)); // 2.5 = slider minimum (most compact)
   const [showRelations, setShowRelations] = useState(true);
   const [showStubs, setShowStubs] = useState(false);
   const [showAllPopes, setShowAllPopes] = useState(false);
@@ -32,7 +35,7 @@ export default function App() {
   const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
   const [selectedHeresy, setSelectedHeresy] = useState<string | null>(null);
   const [hover, setHover] = useState<HoverState | null>(null);
-  const [sideOpen, setSideOpen] = useState(true);
+  const [sideOpen, setSideOpen] = useState(() => !isMobile());
   const [welcome, setWelcome] = useState(() => localStorage.getItem('patrologija.welcomeSeen') !== '1');
   const dismissWelcome = () => {
     setWelcome(false);
@@ -66,9 +69,12 @@ export default function App() {
 
   const layout = useMemo(() => buildLayout(filteredPeople), [filteredPeople]);
   const availableCross = (orientation === 'vertical' ? mainSize.w : mainSize.h) - 16;
+  // On a mobile-width, horizontal layout: shrink lanes so every group fits the
+  // screen height — no vertical scrolling, only horizontal along the time axis.
+  const fitCross = orientation === 'horizontal' && mainSize.w <= 720;
   const geo = useMemo(
-    () => new Geometry(layout, zoom, orientation, YEAR_MAX - YEAR_MIN, availableCross),
-    [layout, zoom, orientation, availableCross],
+    () => new Geometry(layout, zoom, orientation, YEAR_MAX - YEAR_MIN, availableCross, fitCross),
+    [layout, zoom, orientation, availableCross, fitCross],
   );
 
   // focus set: which person ids stay highlighted (others dim)
